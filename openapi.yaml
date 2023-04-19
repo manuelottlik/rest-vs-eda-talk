@@ -1,0 +1,129 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: Rooms-Service
+  description: Example API Room Service.
+  contact:
+    email: ottlikmanuel@gmail.com
+  license:
+    name: MIT
+servers:
+  - url: 'https://api.example.com'
+tags:
+  - name: rooms
+
+paths:
+  /rooms:
+    get:
+      description: Get all rooms
+      operationId: getRooms
+      tags:
+        - rooms
+      responses:
+        "200":
+          $ref: "#/components/responses/RoomCollection"
+        default:
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+    post:
+      description: Create a room
+      operationId: createRoom
+      tags:
+        - rooms
+      requestBody:
+        $ref: "#/components/requestBodies/Room"
+      responses:
+        "201":
+          $ref: "#/components/responses/Room"
+        "422":
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+        default:
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+  /rooms/{roomId}:
+    parameters:
+      - $ref: "#/components/parameters/RoomId"
+    get:
+      description: Info for a specific Room
+      operationId: getRoomById
+      tags:
+        - rooms
+      responses:
+        "200":
+          $ref: "#/components/responses/Room"
+        "404":
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+        default:
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+    put:
+      description: update a specific room
+      operationId: updateRoom
+      tags:
+        - rooms
+      requestBody:
+        $ref: "#/components/requestBodies/Room"
+      responses:
+        "201":
+          $ref: "#/components/responses/Room"
+        "404":
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+        "422":
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+        default:
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+    delete:
+      description: delete a room
+      operationId: deleteRoom
+      tags:
+        - rooms
+      responses:
+        "204":
+          $ref: "defaults.yaml#/components/responses/DeletedObject"
+        "404":
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+        default:
+          $ref: "defaults.yaml#/components/responses/DefaultProblem"
+
+components:
+  responses:
+    RoomCollection:
+      description: Collection of rooms.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomCollection"
+    Room:
+      description: Single room.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Room"
+
+  requestBodies:
+    Room:
+      required: true
+      description: room to add
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Room"
+
+  parameters:
+    RoomId:
+      name: roomId
+      in: path
+      required: true
+      description: The id of the room to retrieve
+      schema:
+        type: integer
+
+  schemas:
+    RoomCollection:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Room"
+      required:
+        - data
+    Room:
+      $ref: "schemas.yaml#/components/schemas/Room"
