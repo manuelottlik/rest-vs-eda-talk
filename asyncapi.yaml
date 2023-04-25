@@ -1,0 +1,58 @@
+asyncapi: "2.0.0"
+info:
+  title: Rooms-Service
+  description: Example API Rooms-Service.
+  version: "1.0.0"
+  contact:
+    name: Manuel Ottlik
+    email: ottlikmanuel@gmail.com
+  license:
+    name: MIT
+tags:
+  - name: rooms
+
+defaultContentType: application/json
+
+channels:
+  evt.rooms.created:
+    subscribe:
+      summary: "An room was created."
+      tags:
+        - name: rooms
+      message:
+        $ref: "#/components/messages/RoomCreated"
+  evt.rooms.updated:
+    subscribe:
+      summary: "An room was updated."
+      tags:
+        - name: rooms
+      message:
+        $ref: "#/components/messages/RoomUpdated"
+  evt.rooms.deleted:
+    subscribe:
+      summary: "An room was deleted."
+      tags:
+        - name: rooms
+      message:
+        $ref: "#/components/messages/RoomDeleted"
+
+components:
+  messages:
+    RoomCreated:
+      payload:
+        $ref: "#/components/schemas/RoomCloudEvent"
+    RoomUpdated:
+      payload:
+        $ref: "#/components/schemas/RoomCloudEvent"
+    RoomDeleted:
+      payload:
+        $ref: "defaults.yaml#/components/schemas/EmptyCloudEvent"
+
+  schemas:
+    RoomCloudEvent:
+      allOf:
+        - $ref: "defaults.yaml#/components/schemas/DefaultCloudEvent"
+        - type: object
+          properties:
+            data:
+              $ref: "schemas.yaml#/components/schemas/Room"

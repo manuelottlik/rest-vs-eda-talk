@@ -1,0 +1,24 @@
+components:
+  schemas:
+    Room:
+      type: object
+      required:
+        - number
+        - bookable
+      properties:
+        number:
+          type: string
+          description: room number
+          example: "A 1.02"
+          minLength: 0
+          maxLength: 20
+        name:
+          type: string
+          description: name of the room
+          example: Conference room
+          minLength: 2
+          maxLength: 255
+        bookable:
+          type: boolean
+          description: wether this room can be booked or not
+          example: true

@@ -1,0 +1,125 @@
+components:
+  responses:
+    DeletedObject:
+      description: the object was successfully deleted
+    DefaultProblem: # fallback problem
+      description: a problem occurred
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/DefaultProblem"
+    ValidationProblem: # typically thrown on HTTP 409 or HTTP 422
+      description: a validation problem occurred
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ValidationProblem"
+
+  schemas:
+    DefaultCloudEvent:
+      type: object
+      required:
+        - specversion
+        - id
+        - source
+        - type
+      properties:
+        specversion:
+          type: string
+          description: The version of the CloudEvents specification which the event uses.
+          enum:
+            - "1.0"
+          example: 1.0
+        id:
+          type: string
+          minLength: 1
+          description: Identifies the event.
+          example: 123e4567-e89b-12d3-a456-426614174000
+        source:
+          type: string
+          format: uri-reference
+          minLength: 1
+          description: Identifies the context in which an event happened.
+          example: https://api.example.com
+        type:
+          type: string
+          minLength: 1
+          description: Describes the type of event related to the originating occurrence.
+          example: evt.entity.operation
+        datacontenttype:
+          type: string
+          description: Content type of the data value. Must adhere to RFC 2046 format.
+          example: application/json
+        dataschema:
+          type: string
+          description: Identifies the schema that data adheres to.
+        subject:
+          type: string
+          description: Describes the subject of the event in the context of the event producer (identified by source).
+          example: "1"
+        time:
+          type: string
+          format: date-time
+          description: Timestamp of when the occurrence happened. Must adhere to RFC 3339.
+          example: "2002-10-02T15:00:00Z"
+    EmptyCloudEvent:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCloudEvent'
+        - type: object
+          properties:
+            data: {}
+    DefaultProblem:
+      type: object
+      required:
+        - type
+        - status
+        - title
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code returned for the problem.
+          example: 400
+        type:
+          type: string
+          description: URI pointing to a human readable documentation.
+          default: about:blank
+        title:
+          type: string
+          description: Short, human readable description of the problem.
+          example: The provided e-mail address is already taken.
+        detail:
+          type: string
+          description: Human readable explanation of the problem.
+          example: The e-mail adress serves as an identifier and thus can only be taken once.
+        instance:
+          type: string
+          description: Endpoint where the problem occurred.
+          example: /users
+
+    ValidationProblem:
+      allOf:
+        - $ref: "#/components/schemas/DefaultProblem"
+        - type: object
+          description: Problem object thrown when request is syntactically correct, but has form validation errors (e.g. in HTTP 400 or HTTP 422).
+          properties:
+            violations:
+              type: array
+              items:
+                $ref: '#/components/schemas/Violation'
+
+    Violation:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Form field that is violated.
+          example: name
+        rule:
+          type: string
+          description: Name of the rule violated.
+          example: minLength
+        message:
+          type: string
+          description: String in natural language describing the problem.
+          example: Field 'name' needs to be at least 5 characters long.
