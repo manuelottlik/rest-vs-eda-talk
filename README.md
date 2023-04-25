@@ -15,7 +15,7 @@ number:
 name:
     type: string
     description: name of the room
-    example: Aula
+    example: Conference room
     minLength: 2
     maxLength: 255
 bookable:
